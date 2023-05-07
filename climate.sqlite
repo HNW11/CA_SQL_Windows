@@ -1,0 +1,63 @@
+/*NUMBER 1*/
+/*SELECT *
+from state_climate;*/
+
+/*Columns include state(txt), year(int), tempf(real), tempc(real)*/
+
+/*NUMBER 2*/
+/*SELECT 
+    state,
+    year, 
+    tempf,
+    AVG(tempf) OVER (
+      PARTITION BY state
+      ORDER BY year
+    ) AS 'running_avg_temp'
+FROM state_climate
+WHERE year > 2000; */
+
+/*Florida average running total changed from 70.93 in 2001 to 71.52 in 2018 */
+
+/*NUMBER 3*/
+/*SELECT 
+    state,
+    year, 
+    tempf,
+    FIRST_VALUE(tempf) OVER (
+      PARTITION BY state
+      ORDER BY tempf
+    ) AS lowest_temp
+FROM 
+  state_climate*/
+
+/*The lowest_temps are typically more historic*/
+
+/*NUMBER 4*/
+/*SELECT 
+    state,
+    year, 
+    tempf,
+    LAST_VALUE(tempf) OVER (
+      PARTITION BY state
+      ORDER BY tempf
+      RANGE BETWEEN UNBOUNDED PRECEDING AND 
+      UNBOUNDED FOLLOWING
+    ) AS highest_temp
+FROM 
+  state_climate*/
+
+/*The highest_temps are typically more recent*/
+
+/*NUMBER 5*/
+SELECT 
+    state,
+    year,
+    tempf,
+    tempf - LAG(tempf, 1, tempf) OVER (
+      PARTITION BY state
+      ORDER BY year
+    ) AS 'change_in_temp'
+FROM state_climate
+ORDER BY change_in_temp DESC
+
+/*Biggest change was in North Dakota in 1952*/
